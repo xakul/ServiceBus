@@ -6,24 +6,26 @@ namespace ServiceBusPublisher.Services;
 
 public class MessagePublisher : IMessagePublisher
 {
-    private readonly IQueueClient _queueClient;
+    private readonly ITopicClient _topicClient;
 
-    public MessagePublisher(IQueueClient queueClient)
+    public MessagePublisher(ITopicClient topicClient)
     {
-        _queueClient = queueClient;
+        _topicClient = topicClient;
     }
     
     public Task Publish<T>(T obj)
     {
         var objectAsText = JsonConvert.SerializeObject(obj);
         var message = new Message(Encoding.UTF8.GetBytes(objectAsText));
-        return _queueClient.SendAsync(message);
+        message.UserProperties["messageType"] = typeof(T).Name;
+        return _topicClient.SendAsync(message);
         
     }
 
     public Task Publish(string raw)
     {
         var message = new Message(Encoding.UTF8.GetBytes(raw));
-        return _queueClient.SendAsync(message);
+        message.UserProperties["messageType"] = "Raw";
+        return _topicClient.SendAsync(message);
     }
 }

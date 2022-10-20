@@ -11,9 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
-builder.Services.AddSingleton<IQueueClient>(x =>
-    new QueueClient(builder.Configuration.GetValue<string>("ServiceBus:ConnectionString"),
-        builder.Configuration.GetValue<string>("ServiceBus:QueueName")));
+builder.Services.AddSingleton<ITopicClient>(x =>
+    new TopicClient(builder.Configuration.GetValue<string>("ServiceBus:ConnectionString"),
+        builder.Configuration.GetValue<string>("ServiceBus:TopicName")));
 
 var app = builder.Build();
 
